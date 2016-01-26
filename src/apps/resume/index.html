@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+      <!--Import Google Icon Font-->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <!--Import materialize.css-->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+
+      <!--Let browser know website is optimized for mobile-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+
+    <body>
+      <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+      <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+
+      <div class="container">
+		
+		<nav class="blue-grey darken-1">
+			<ul id="nav-mobile" class="left hide-on-med-and-down">
+			    <li><a href="/">Home</a></li>
+				<li><a href="/apps/resume/subscribe.html">Subscribe</a></li>
+	        </ul>
+		</nav>
+		
+        <h1 align="center" style="font-family:verdana;"><u>Resume for Russell Mehring</u></h1>
+
+		<h2 style="font-family:verdana;">Contact:</h2>
+			<ul class="collection" id="contact">
+        </ul>
+		
+        <h2 style="font-family:verdana;">Education:</h2>
+			<ul class="collection" id="education">
+        </ul>
+		
+		<h2 style="font-family:verdana;">Technology Summary:</h2>
+			<ul class="collection" id="technology">
+        </ul>
+		
+		<h2 style="font-family:verdana;">Work Experience:</h2>
+			<ul class="collection" id="experience">
+        </ul>
+		
+		<h2 style="font-family:verdana;">Current Tasks:</h2>
+			<ul class="collection" id="tasks">
+        </ul>
+		
+      </div>
+
+      <script>
+
+        // create a firebase reference to the root
+        var ref = new Firebase('https://mehring-resume.firebaseio.com/');
+		var teamRef = new Firebase('https://rockemsockemrobotstodo.firebaseio.com/');
+		
+		// read data from the location Contact once
+		ref.child('Contact').once('value', function(snapshot){
+		  snapshot.forEach(function(childSnapshot) {
+		   var key = childSnapshot.key();
+		   var childData = childSnapshot.val();
+		   $('#contact').append('<li class="collection-item"> <font size="6">' + key + "</font><p>" + childData + '</p></li>')
+		   })
+		});
+		
+		// read data from the location Education/Degree once
+		ref.child('Education/Degree').once('value', function(snapshot){
+		  snapshot.forEach(function(childSnapshot) {
+		   var key = childSnapshot.key();
+		   var childData = childSnapshot.val();
+		   $('#education').append('<li class="collection-item"> <font size="6">' + key + '</font><p><font color = "orange">GPA</font>: ' + childData.GPA + '</p>'
+		   + '<p><font color = "orange">Graduation Date:</font> ' + childData.GradDate + '</p> <p><font color = "orange">School </font>: ' + childData.School + '</p></li>')
+		   })
+		});
+		
+		// read data from the location Technology once
+		ref.child('Technology').once('value', function(snapshot){
+		  snapshot.forEach(function(childSnapshot) {
+		   var key = childSnapshot.key();
+		   var childData = childSnapshot.val();
+		   $('#technology').append('<li class="collection-item"> <font size="6">' + key + "</font><p>" + childData + '</p></li>')
+		   })
+		});
+		
+		// read data from the location Experience once
+		ref.child('Experience').once('value', function(snapshot){
+		  snapshot.forEach(function(childSnapshot) {
+		   var key = childSnapshot.key();
+		   var childData = childSnapshot.val();
+		   $('#experience').append('<li class="collection-item"> <font size="6">' + key + "</font><p>" + childData + '</p></li>')
+		   })
+		});
+		
+		// read data from assigned team tasks consistently--low 
+		teamRef.child('todos/Low').on('value', function(snapshot){
+		  snapshot.forEach(function(childSnapshot) {
+		   var key = childSnapshot.key();
+		   var childData = childSnapshot.val();
+			   if(childData.Assigned == "BenedictRM"){
+				   $('#tasks').append('<li class="collection-item"> <font size="6" color = orange>' + childData.Title +  "</font><p><font color = purple> Assigned To: </font>" + childData.Assigned + "</font><p><font color = red> Deadline:</font>" + childData.Deadline + "</p><font color = blue> Priority: </font>Low</p> </p><font color = green> Completed: </font>" + childData.Complete + '</p></li>')
+			   }
+		   })
+		});
+		
+		// read data from assigned team tasks consistently--medium 
+		teamRef.child('todos/Medium').on('value', function(snapshot){
+		  snapshot.forEach(function(childSnapshot) {
+		   var key = childSnapshot.key();
+		   var childData = childSnapshot.val();
+			   if(childData.Assigned == "BenedictRM"){
+				   $('#tasks').append('<li class="collection-item"> <font size="6" color = orange>' + childData.Title +  "</font><p><font color = purple> Assigned To: </font>" + childData.Assigned + "</font><p><font color = red> Deadline:</font>" + childData.Deadline + "</p><font color = blue> Priority: </font>Medium</p> </p><font color = green> Completed: </font>" + childData.Complete + '</p></li>')
+			   }
+		   })
+		});
+		
+		// read data from assigned team tasks consistently--high 
+		teamRef.child('todos/High').on('value', function(snapshot){
+		  snapshot.forEach(function(childSnapshot) {
+		   var key = childSnapshot.key();
+		   var childData = childSnapshot.val();
+			   if(childData.Assigned == "BenedictRM"){
+				   $('#tasks').append('<li class="collection-item"> <font size="6" color = orange>' + childData.Title +  "</font><p><font color = purple> Assigned To: </font>" + childData.Assigned + "</font><p><font color = red> Deadline: </font>" + childData.Deadline + "</p><font color = blue> Priority: </font>High</p> </p><font color = green> Completed: </font>" + childData.Complete + '</p></li>')
+			   }
+		   })
+		});
+		
+      </script>
+    </body>
+  </html>

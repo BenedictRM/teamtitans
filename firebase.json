@@ -1,0 +1,9 @@
+{
+  "firebase": "mehring-resume",
+  "public": "build",
+  "ignore": [
+    "firebase.json",
+    "**/.*",
+    "**/node_modules/**"
+  ]
+}
