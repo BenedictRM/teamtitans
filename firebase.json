@@ -1,5 +1,5 @@
 {
-  "firebase": "mehring-resume",
+  "firebase": "team-titans.firebaseio.com",
   "public": "build",
   "ignore": [
     "firebase.json",

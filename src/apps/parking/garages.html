@@ -48,9 +48,80 @@ ref.child('san_francisco/garages').once('value', function(snapshot){
 function displayGarages(garages){
   // lodash _.forEach https://lodash.com/docs#forEach
   _.forEach(garages, function(val, key){
-    $('#garages').append('<li class="collection-item">' + val['friendlyName'] + '</li>')
+    var color = fullPercent(val)
+    var parkingHours = val['rates']
+    currentRate = determineCurrentRate(parkingHours)
+    $('#garages').append('<li><div class="collapsible-header ' + color + '"><i class="material-icons">directions_car</i>' + val['friendlyName'] + '</div><div class="collapsible-body"><p>Open Spaces: ' + val['open_spaces'] + '<br>Total Spaces: ' + val['total_spaces'] + '<br>Current Rate: ' + currentRate[1] + '</p></div></li>')
   })
 }
+
+function fullPercent(val){
+  var openPercent = (val['open_spaces']/val['total_spaces'])*100
+  var color = 'green lighten-4'
+    if(openPercent<20){
+      color = 'red lighten-4'
+    } else if(openPercent<40){
+      color = 'yellow lighten-4'
+    } else if(openPercent<60){
+      color = 'orange lighten-4'
+    } return color
+}
+
+// Ignores special rate fields (eg 'Motorcyle', 'Maximum') and only looks at times
+// Returns array with current rate values [parkingRateFloat, parkingRateString]
+//    If it can't find rate - Returns [0, 'None']
+function determineCurrentRate(parkingHours) {
+  var parkingRateFloat = 0
+  var parkingRateString = 'None'
+  var currentdate = new Date();
+  var datetime = ((currentdate.getHours() - 1) * 60) + currentdate.getMinutes()
+  if (Array.isArray(parkingHours)){
+    for (var i = 0; i < parkingHours.length; i++ ) {
+      if (typeof parkingHours[i]['BEG'] != 'undefined') {
+        var beginningTime = timeToInt(parkingHours[i]['BEG'], 'beginning')
+        var endingTime = timeToInt(parkingHours[i]['END'], 'end')
+        if (datetime < endingTime && datetime >= beginningTime) {
+          parkingRateFloat = parseFloat(parkingHours[i]['RATE'])
+          parkingRateString = '$' + (parkingHours[i]['RATE']) + ' ' + (parkingHours[i]['RQ'])
+          break;
+        }
+      }
+    }
+  }
+  return [parkingRateFloat, parkingRateString]
+}
+
+// Converts the time strings from firebase to an int representing current time minutes
+function timeToInt(timeString, beginningOrEnd) {
+  timeArray = timeString.split(":")
+  var hours = parseInt(timeArray[0])
+  var theRest = timeArray[1]
+  var theRestArray = timeArray[1].split(" ")
+  var minutes = parseInt(theRestArray[0])
+  var amOrPm = theRestArray[1]
+
+  if (amOrPm == 'PM') {
+    if (hours != 12) {
+      hours = hours + 12
+    }
+    timeNum = (hours * 60) + minutes
+    return timeNum
+  }
+  else {
+    // Midnight is a special case - 0 if beginning, 24 if end
+    if (hours == 12) {
+      if (beginningOrEnd == 'beginning') {
+        hours = 0
+      }
+      else {
+        hours = 24
+      }
+    }
+    timeNum = (hours * 60) + minutes
+  }
+  return timeNum
+}
+
       </script>
     </body>
   </html>
