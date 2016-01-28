@@ -11,15 +11,28 @@
     </head>
 
     <body>
+
       <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
       <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js"></script>
-      
+
+      <nav>
+        <div class="nav-wrapper green lighten-2">
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li class="active"><a href="garages.html">List</a></li>
+            <li><a href="garages_map.html">Map</a></li>
+          </ul>
+        </div>
+      </nav> 
+
+      <div style="background-image:url('http://ww2.kqed.org/news/wp-content/uploads/sites/10/2014/01/parking-e1421692177386.jpg');">
+
       <div class="container">
 
-        <h1>Garages</h1>
-        <ul class="collection" id="garages">
+        <h1><font color="white">Garages</font></h1>
+        <ul class="collapsible z-depth-5" data-collapsible="accordion" id="garages">
         </ul>
 
       </div>
@@ -32,7 +45,8 @@ var ref = new Firebase('https://publicdata-parking.firebaseio.com');
 var data
 
 // read data from the location san_francisco/garages, only once
-ref.child('san_francisco/garages').once('value', function(snapshot){
+ref.child('san_francisco/garages').on('value', function(snapshot){
+  $('#garages').empty()
   data = snapshot.val()
   console.log('data is loaded', data)
 
@@ -51,7 +65,7 @@ function displayGarages(garages){
     var color = fullPercent(val)
     var parkingHours = val['rates']
     currentRate = determineCurrentRate(parkingHours)
-    $('#garages').append('<li><div class="collapsible-header ' + color + '"><i class="material-icons">directions_car</i>' + val['friendlyName'] + '</div><div class="collapsible-body"><p>Open Spaces: ' + val['open_spaces'] + '<br>Total Spaces: ' + val['total_spaces'] + '<br>Current Rate: ' + currentRate[1] + '</p></div></li>')
+    $('#garages').append('<li><div class="collapsible-header ' + color + '"><i class="material-icons">directions_car</i>' + val['friendlyName'] + '</div><div class="collapsible-body white"><p>Open Spaces: ' + val['open_spaces'] + '<br>Total Spaces: ' + val['total_spaces'] + '<br>Current Rate: ' + currentRate[1] + '</p></div></li>')
   })
 }
 
@@ -75,7 +89,7 @@ function determineCurrentRate(parkingHours) {
   var parkingRateString = 'None'
   var currentdate = new Date();
   var datetime = ((currentdate.getHours() - 1) * 60) + currentdate.getMinutes()
-  if (Array.isArray(parkingHours)){
+    if (Array.isArray(parkingHours)){
     for (var i = 0; i < parkingHours.length; i++ ) {
       if (typeof parkingHours[i]['BEG'] != 'undefined') {
         var beginningTime = timeToInt(parkingHours[i]['BEG'], 'beginning')
@@ -121,6 +135,7 @@ function timeToInt(timeString, beginningOrEnd) {
   }
   return timeNum
 }
+
 
       </script>
     </body>
