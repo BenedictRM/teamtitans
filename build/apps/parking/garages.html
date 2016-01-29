@@ -52,10 +52,8 @@
       </div>
 
       <script>
-
 		// create a firebase reference to the root
 		var ref = new Firebase('https://publicdata-parking.firebaseio.com');
-
 		var data
 
 		// read data from the location san_francisco/garages, only once
@@ -79,6 +77,7 @@
 			var color = fullPercent(val)
 			var parkingHours = val['rates']
 			currentRate = determineCurrentRate(parkingHours)
+			console.log(currentRate);
 			$('#garages').append('<li><div class="collapsible-header ' + color + '"><i class="material-icons">directions_car</i>' + val['friendlyName'] + '</div><div class="collapsible-body white"><p>Open Spaces: ' + val['open_spaces'] + '<br>Total Spaces: ' + val['total_spaces'] + '<br>Current Rate: ' + currentRate[1] + '</p></div></li>')
 		  })
 		}

@@ -53,10 +53,13 @@
       </div>
 		
   <script>
-
 		// create a firebase reference to the root
 		var ref = new Firebase('https://publicdata-parking.firebaseio.com');
-		var data
+		var attributionText = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'
+		// create a layer group to hold all the markers
+		var markersLayerGroup = L.layerGroup();
+		var i=0;
+		var data;
 
 		// read data from the location san_francisco/garages, only once
 		ref.child('san_francisco/garages').on('value', function(snapshot){
@@ -68,9 +71,7 @@
 		  })
 
 		  drawGarages(garages)
-		})
-
-		var attributionText = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'
+		});
 
 		// create the map
 		var map = L.map($('#map')[0]).setView([37.78, -122.41], 13)
@@ -81,81 +82,133 @@
 			accessToken: 'pk.eyJ1IjoiZG91Ymxlc2hvdyIsImEiOiJjaWZ5Y3B1eTE1MHRidWRtMG9uZXluajg4In0.u5ONW27Ly5cU7M5KYi6Y9Q'
 		}).addTo(map)
 
-		// create a layer group to hold all the markers
-		var markersLayerGroup = L.layerGroup()
 		// add the makers layer group to the map
 		markersLayerGroup.addTo(map)
 		
-			var showmore = function(key) {
-				$("p").show();
-				
-				var i=0;
-				ref.child('san_francisco/garages').on('value', function(snapshot){
-					var cost = snapshot.val();
-					for(var r in cost)
+		var showmore = function(key) {
+			$("p").show();		
+			var i=0;
+			ref.child('san_francisco/garages').on('value', function(snapshot){
+				var cost = snapshot.val();
+				for(var r in cost)
+				{
+					i=i+1;
+					var rate= cost[r];
+					//var points= rate['points'][0]+","+rate['points'][1]+"<br>"
+					if(i==key)
 					{
-						i=i+1;
-						var rate= cost[r];
-						//var points= rate['points'][0]+","+rate['points'][1]+"<br>"
-						if(i==key)
+						var price= rate['rates'];
+						var str="<p class='flow-text '><span class=' blue-text text-light-blue darken-3'>Rate Information</span></p>";
+						for(var p in price)
 						{
-							var price= rate['rates'];
-							var str="<p class='flow-text '><span class=' blue-text text-light-blue darken-3'>Rate Information</span></p>";
-							for(var p in price)
-							{
-								Object.keys(price[p]).forEach(function(key) {
-									if (key=='BEG')
-									{
-										str += 'Time: ' + price[p]['BEG'] +" ~ "+ price[p]['END']+ '</p>';
-									}
-									if (key=='DESC')
-									{
-										str += 'Period: ' + price[p]['DESC']+'</p>';
-									}
-									if(key=='RATE')
-									{
-										str += 'Rate: $' + price[p]['RATE'];
-										
-									}
-									if(key=='RQ')
-									{
-										str +=' ('+ price[p]['RQ']+')<br>--------------------------------------------------------------<br>';
-									}
-								});
-							}
-								
-							$('#p1').html(str);	
-						}	
-					}
-				});
-			};
-			
-		var i=0;
+							Object.keys(price[p]).forEach(function(key) {
+								if (key=='BEG')
+								{
+									str += 'Time: ' + price[p]['BEG'] +" ~ "+ price[p]['END']+ '</p>';
+								}
+								if (key=='DESC')
+								{
+									str += 'Period: ' + price[p]['DESC']+'</p>';
+								}
+								if(key=='RATE')
+								{
+									str += 'Rate: $' + price[p]['RATE'];
+									
+								}
+								if(key=='RQ')
+								{
+									str +=' ('+ price[p]['RQ']+')<br>--------------------------------------------------------------<br>';
+								}
+							});
+						}
+						$('#p1').html(str);	
+					}	
+				}
+			});
+		};
+				
 		// visualize garages on a map
 		function drawGarages(garages){
 
 		  // clear all existing markers (if any)
 		  markersLayerGroup.clearLayers()
 
-		  _.forEach(garages, function(garage){
+		  _.forEach(garages, function(garage, key){
 		  
 			i +=1;
-			var points = garage.points
-			var latlng = [points[0], points[1]]
-			var garageName= garage.friendlyName
-			var openSpaces= garage.open_spaces
+			var points = garage.points;
+			var latlng = [points[0], points[1]];
+			var garageName= garage.friendlyName;
+			var openSpaces= garage.open_spaces;
+			var cost = garage.rates;
+			currentRate = determineCurrentRate(cost)
+			//console.log(currentRate);
+
 				
 			// create a circle layer
 			var circle = L.circle(latlng, 10, {
 				color: 'blue',
 				fillColor: '#f03',
 				fillOpacity: 0.5
-			}).bindPopup(garageName+'<br>Open Spaces: ' + openSpaces+'<br><a class="label" onclick=showmore("' + i + '") class="teal-text text-darken-3">more detail</a>' )
+			}).bindPopup(garageName+'<br>Open Spaces: ' + openSpaces +'<br>  <a class="label" onclick=showmore("' + i + '")  onmouseover="" style="cursor: pointer;" class="teal-text text-darken-3">more detail</a> ' )
 
 			// add the circle layer to the makers layer group
 			markersLayerGroup.addLayer(circle)
 		  })
 		}
+		
+		function determineCurrentRate(parkingHours) {
+		  var parkingRateFloat = 0
+		  var parkingRateString = 'None'
+		  var currentdate = new Date();
+		  var datetime = ((currentdate.getHours() - 1) * 60) + currentdate.getMinutes()
+			if (Array.isArray(parkingHours)){
+			for (var i = 0; i < parkingHours.length; i++ ) {
+			  if (typeof parkingHours[i]['BEG'] != 'undefined') {
+				var beginningTime = timeToInt(parkingHours[i]['BEG'], 'beginning')
+				var endingTime = timeToInt(parkingHours[i]['END'], 'end')
+				if (datetime < endingTime && datetime >= beginningTime) {
+				  parkingRateFloat = parseFloat(parkingHours[i]['RATE'])
+				  parkingRateString = '$' + (parkingHours[i]['RATE']) + ' ' + (parkingHours[i]['RQ'])
+				  break;
+				}
+			  }
+			}
+		  }
+		  return [parkingRateFloat, parkingRateString]
+		}
+		
+		// Converts the time strings from firebase to an int representing current time minutes
+		function timeToInt(timeString, beginningOrEnd) {
+		  timeArray = timeString.split(":")
+		  var hours = parseInt(timeArray[0])
+		  var theRest = timeArray[1]
+		  var theRestArray = timeArray[1].split(" ")
+		  var minutes = parseInt(theRestArray[0])
+		  var amOrPm = theRestArray[1]
+
+		  if (amOrPm == 'PM') {
+			if (hours != 12) {
+			  hours = hours + 12
+			}
+			timeNum = (hours * 60) + minutes
+			return timeNum
+		  }
+		  else {
+			// Midnight is a special case - 0 if beginning, 24 if end
+			if (hours == 12) {
+			  if (beginningOrEnd == 'beginning') {
+				hours = 0
+			  }
+			  else {
+				hours = 24
+			  }
+			}
+			timeNum = (hours * 60) + minutes
+		  }
+		  return timeNum
+		}
+		
       </script>
 	  
 	  <!-- Team copyright for prettyness -->
