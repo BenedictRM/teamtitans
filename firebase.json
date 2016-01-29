@@ -1,5 +1,5 @@
 {
-  "firebase": "team-titans.firebaseio.com",
+  "firebase": "team-titans",
   "public": "build",
   "ignore": [
     "firebase.json",
