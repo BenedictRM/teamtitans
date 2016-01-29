@@ -86,33 +86,39 @@
 		markersLayerGroup.addTo(map)
 		
 		var showmore = function(key) {
-			$("p").show();		
+			//$("p").show();
+			
 			var i=0;
 			ref.child('san_francisco/garages').on('value', function(snapshot){
+				
 				var cost = snapshot.val();
+				var str="";
 				for(var r in cost)
 				{
 					i=i+1;
 					var rate= cost[r];
+					
 					//var points= rate['points'][0]+","+rate['points'][1]+"<br>"
 					if(i==key)
 					{
+						$('#p1').empty();
 						var price= rate['rates'];
-						var str="<p class='flow-text '><span class=' blue-text text-light-blue darken-3'>Rate Information</span></p>";
+						str +="<p class='flow-text '><span class=' blue-text text-light-blue darken-3'>Rate Information</span></p>";
 						for(var p in price)
 						{
 							Object.keys(price[p]).forEach(function(key) {
 								if (key=='BEG')
 								{
-									str += 'Time: ' + price[p]['BEG'] +" ~ "+ price[p]['END']+ '</p>';
+									str += 'Time: ' + price[p]['BEG']+" ~ "+ price[p]['END']; ;
 								}
+
 								if (key=='DESC')
 								{
-									str += 'Period: ' + price[p]['DESC']+'</p>';
+									str += 'Time: ' + price[p]['DESC'];
 								}
 								if(key=='RATE')
 								{
-									str += 'Rate: $' + price[p]['RATE'];
+									str += '</p>Rate: $' + price[p]['RATE'];
 									
 								}
 								if(key=='RQ')
@@ -121,9 +127,10 @@
 								}
 							});
 						}
-						$('#p1').html(str);	
+							
 					}	
 				}
+				$('#p1').append(str);
 			});
 		};
 				
@@ -132,10 +139,10 @@
 
 		  // clear all existing markers (if any)
 		  markersLayerGroup.clearLayers()
-
+			var j=0;
 		  _.forEach(garages, function(garage, key){
-		  
-			i +=1;
+		    
+			j +=1;
 			var points = garage.points;
 			var latlng = [points[0], points[1]];
 			var garageName= garage.friendlyName;
@@ -150,7 +157,8 @@
 				color: 'blue',
 				fillColor: '#f03',
 				fillOpacity: 0.5
-			}).bindPopup(garageName+'<br>Open Spaces: ' + openSpaces +'<br>  <a class="label" onclick=showmore("' + i + '")  onmouseover="" style="cursor: pointer;" class="teal-text text-darken-3">more detail</a> ' )
+			}).bindPopup(garageName+'<br>Open Spaces: ' + openSpaces +'<br>  <a class="label" onclick=showmore("' + j + '") class="teal-text text-darken-3">more detail</a> ',closeOnClick=true )
+			//.bindPopup(garageName+'<br>Open Spaces: ' + openSpaces +'<br>  <a class="label" onclick=showmore("' + i + '")  onmouseover="" style="cursor: pointer;" class="teal-text text-darken-3">more detail</a> ' )
 
 			// add the circle layer to the makers layer group
 			markersLayerGroup.addLayer(circle)
