@@ -7,7 +7,7 @@
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
 
       <!--Import stylesheet for Leaflet to work-->
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" />
+      <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.css" />
       <link rel="stylesheet" href="/css/leaflet.label.css" />
 
       <!--Let browser know website is optimized for mobile-->
@@ -19,7 +19,7 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
       <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+      <script src="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.js"></script>
       <script src="/js/leaflet.label.js"></script>
 	  
 	  <!-- Dropdown of team member names -->
@@ -33,10 +33,9 @@
       <nav>
         <div class="nav-wrapper green lighten-2">
           <ul>
-		    <li><a href="/">Course Home</a></li>
             <li><a href="index.html">Home</a></li>
-            <li><a href="garages.html">List</a></li>
-            <li class="active"><a href="garages_map.html">Map</a></li>
+            <li class="active"><a href="garages.html">List</a></li>
+            <li><a href="garages_map.html">Map</a></li>
           </ul>
 		  
 		  <!-- Activate Dropdown of team member names -->
@@ -87,39 +86,33 @@
 		markersLayerGroup.addTo(map)
 		
 		var showmore = function(key) {
-			//$("p").show();
-			
+			$("p").show();		
 			var i=0;
 			ref.child('san_francisco/garages').on('value', function(snapshot){
-				
 				var cost = snapshot.val();
-				var str="";
 				for(var r in cost)
 				{
 					i=i+1;
 					var rate= cost[r];
-					
 					//var points= rate['points'][0]+","+rate['points'][1]+"<br>"
 					if(i==key)
 					{
-						$('#p1').empty();
 						var price= rate['rates'];
-						str +="<p class='flow-text '><span class=' blue-text text-light-blue darken-3'>Rate Information</span></p>";
+						var str="<p class='flow-text '><span class=' blue-text text-light-blue darken-3'>Rate Information</span></p>";
 						for(var p in price)
 						{
 							Object.keys(price[p]).forEach(function(key) {
 								if (key=='BEG')
 								{
-									str += 'Time: ' + price[p]['BEG']+" ~ "+ price[p]['END']; ;
+									str += 'Time: ' + price[p]['BEG'] +" ~ "+ price[p]['END']+ '</p>';
 								}
-
 								if (key=='DESC')
 								{
-									str += 'Time: ' + price[p]['DESC'];
+									str += 'Period: ' + price[p]['DESC']+'</p>';
 								}
 								if(key=='RATE')
 								{
-									str += '</p>Rate: $' + price[p]['RATE'];
+									str += 'Rate: $' + price[p]['RATE'];
 									
 								}
 								if(key=='RQ')
@@ -128,10 +121,9 @@
 								}
 							});
 						}
-							
+						$('#p1').html(str);	
 					}	
 				}
-				$('#p1').append(str);
 			});
 		};
 				
@@ -140,10 +132,10 @@
 
 		  // clear all existing markers (if any)
 		  markersLayerGroup.clearLayers()
-			var j=0;
+
 		  _.forEach(garages, function(garage, key){
-		    
-			j +=1;
+		  
+			i +=1;
 			var points = garage.points;
 			var latlng = [points[0], points[1]];
 			var garageName= garage.friendlyName;
@@ -158,8 +150,7 @@
 				color: 'blue',
 				fillColor: '#f03',
 				fillOpacity: 0.5
-			}).bindPopup(garageName+'<br>Open Spaces: ' + openSpaces +'<br>  <a class="label" onclick=showmore("' + j + '") class="teal-text text-darken-3">more detail</a> ',closeOnClick=true )
-			//.bindPopup(garageName+'<br>Open Spaces: ' + openSpaces +'<br>  <a class="label" onclick=showmore("' + i + '")  onmouseover="" style="cursor: pointer;" class="teal-text text-darken-3">more detail</a> ' )
+			}).bindPopup(garageName+'<br>Open Spaces: ' + openSpaces +'<br>  <a class="label" onclick=showmore("' + i + '")  onmouseover="" style="cursor: pointer;" class="teal-text text-darken-3">more detail</a> ' )
 
 			// add the circle layer to the makers layer group
 			markersLayerGroup.addLayer(circle)
