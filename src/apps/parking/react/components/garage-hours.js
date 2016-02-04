@@ -8,13 +8,11 @@ MyComponents.Hour = React.createClass({
    }
 
    return (
-     <div className="card">
-       <div className="card-content">
+
          <p>
          { vals }
          </p>
-       </div>
-     </div>
+
    );
  }
 });
@@ -30,9 +28,7 @@ MyComponents.GarageHours = React.createClass({
     return (
       <div className="card">
         <div className="card-content">
-          TODO: This is a component to display the hours of this garage.
-          Raw props data is {JSON.stringify(this.props)}
-
+			<i className="small material-icons">schedule</i>&nbsp;<span className="blue-text text-darken-2"><font size="18px">Garage Open Hour:</font></span>
           { hours }
 
         </div>
