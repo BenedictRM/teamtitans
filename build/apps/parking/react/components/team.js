@@ -9,7 +9,7 @@ MyComponents.Team = React.createClass({
 
     var members = this.props.members.map(function(member, i){
       return <li key={i} className="collection-item">
-              <img src="../person.png" width="20" high="20"></img> {member.name}&nbsp;&nbsp;>>
+              <img src="../person.png" width="20" high="20"></img> {member.name + " >>"}&nbsp;&nbsp;
               <a className="white" href={member.github}>Github</a>
             </li>
     })
