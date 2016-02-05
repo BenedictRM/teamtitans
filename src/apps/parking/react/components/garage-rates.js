@@ -25,13 +25,20 @@ MyComponents.GarageRates = React.createClass({
     })
 
     return (
-      <div className="card">
-        <div className="card-content">
-			<img src="coin_money.png" width="20" high="20"></img>&nbsp;
-			<span className="blue-text text-darken-2"><font size="18px">Garage Open Hour:</font></span>
-
-			{ rates }
-
+      <div className="row">
+        <div className="col s12 m9">
+          <div className="card">
+            <div className="card-image waves-effect waves-block waves-light">
+              <img className="activator" src="http://www.rentenbach.com/Uploads/Images/PhotoGalleries/VA%20Tech%20Parking%20Deck%204[1].JPG" height="500"></img>
+            </div>
+            <div className="card-content">
+              <span className="card-title activator grey-text text-darken-4">Garage Rate Info<i className="material-icons right">more_vert</i></span>
+            </div>
+            <div className="card-reveal">
+              <span className="card-title grey-text text-darken-4">Garage Rate Info:<i className="material-icons right">close</i></span>
+              {rates}
+            </div>
+          </div>
         </div>
       </div>
     );
