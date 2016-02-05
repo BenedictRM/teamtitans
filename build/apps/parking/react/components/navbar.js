@@ -3,7 +3,7 @@ MyComponents.NavBar = React.createClass({
     return (
       <nav>
         <div className="nav-wrapper green lighten-2">
-        <a href="#" className="brand-logo center">Garage Viewer</a>
+        <a href="#" className="brand-logo center"><font face="Book Antigua" size="9">Garage Viewer</font></a>
         <ul id="nav-mobile" className="left hide-on-med-and-down">
 		  <li><a href="/">Course Home</a></li>
 		  <li><a href="index.html">Home</a></li>
