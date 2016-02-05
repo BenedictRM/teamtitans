@@ -1,8 +1,5 @@
 MyComponents.GarageSpaces = React.createClass({
-  render: function() {
-
-	  
-	  
+  render: function() { 
     return (
       <div className="card">
         <div className="card-content">

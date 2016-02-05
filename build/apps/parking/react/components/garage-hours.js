@@ -1,14 +1,20 @@
 MyComponents.Hour = React.createClass({
-  render: function() {
-    return (
-      <div className="card">
-        <div className="card-content">
-          TODO: This is a component to display an item in the hours array
-          Raw props data is {JSON.stringify(this.props)}
-        </div>
-      </div>
-    );
-  }
+ render: function() {
+
+   var keyMap = {'BEG': 'Open ', 'END': '-', 'FROM': '   ', 'TO': ' through ', }
+   var vals = [];
+   for(var key in this.props.hour) {
+     vals.push(<span key={key}>{keyMap[key]}{this.props.hour[key]}</span>);
+   }
+
+   return (
+
+         <p>
+         { vals }
+         </p>
+
+   );
+ }
 });
 
 
@@ -22,9 +28,7 @@ MyComponents.GarageHours = React.createClass({
     return (
       <div className="card">
         <div className="card-content">
-          TODO: This is a component to display the hours of this garage.
-          Raw props data is {JSON.stringify(this.props)}
-
+			<i className="small material-icons">schedule</i>&nbsp;<span className="blue-text text-darken-2"><font size="18px">Garage Open Hour:</font></span>
           { hours }
 
         </div>
